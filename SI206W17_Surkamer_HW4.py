@@ -13,16 +13,16 @@ from bs4 import BeautifulSoup
 ## PART 1 (100 points) - Get the HTML data from http://www.nytimes.com (the New York Times home page) and save it in a file called nytimes_data.html.
 
 ## Write the Python code to do so here.
-cache_filename = "nytimes_data.html"
-try:
-	f = open(cache_filename, 'r')
-	text_data = f.read()
-	f.close()
-except:
-	nytimes_data = requests.get("http://www.nytimes.com")
-	f = open(cache_filename, 'w', encoding="utf-8")
-	f.write(nytimes_data.text)
-	f.close()
+#cache_filename = "nytimes_data.html"
+#try:
+	#f = open(cache_filename, 'r')
+	#text_data = f.read()
+	#f.close()
+#except:
+nytimes_data = requests.get("http://www.nytimes.com")
+f = open("nytimes_data.html", 'w', encoding="utf-8")
+f.write(nytimes_data.text)
+f.close()
 
 
 #####################
@@ -49,15 +49,24 @@ except:
 ## Write your code to complete this task here.
 ## HINT: Remember that you'll need to open the file you created in Part 1, read the contets into one big string, and make a BeautifulSoup object out of that string!
 ## NOTE that the provided link does not include saving the online data in a file as part of the process. But it still provides very useful hints/tricks about how to look for and identify the headlines on the NY Times page.
-nytimes_data_html = open(cache_filename, 'r', encoding="utf-8")
-soup = BeautifulSoup(nytimes_data_html, 'lxml')
+import sys,io 
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, 'cp437','backslashreplace')
 
-for heading in soup.find_all(class_= "story-heading"):
-	if heading.a:
-		print(heading.a.text.replace("\n", " ").strip())
+
+nytimes_data = open("nytimes_data.html", 'r', encoding="utf-8")
+nytimes_data_html = nytimes_data.read()
+
+soup = BeautifulSoup(nytimes_data_html, 'html.parser')
+headlines = soup.find_all(class_="story-heading")
+headline_list = []
+for headline in headlines:
+	if headline.a:
+		headline_list.append(headline.a.text)
 	else:
-		print(heading.contents[0].strip())
+		continue
+nytimes_headlines = headline_list[:10]
 
+print(nytimes_headlines)
 
 
 
